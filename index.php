@@ -7,7 +7,6 @@ session_start();
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -18,10 +17,9 @@ session_start();
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/ruang-admin.min.css" rel="stylesheet">
-
 </head>
 
-<body class="bg-gradient-login" style="background-image: url('img/logo/loral1.jpe00g');">
+<body class="bg-gradient-login" style="background-image: url('img/logo/loral1.jpg');">
     <!-- Login Content -->
     <div class="container-login">
         <div class="row justify-content-center">
@@ -37,7 +35,7 @@ session_start();
                                         <br><br>
                                         <h1 class="h4 text-gray-900 mb-4">Login Panel</h1>
                                     </div>
-                                    <form class="user" method="Post" action="">
+                                    <form class="user" method="POST" action="">
                                         <div class="form-group">
                                             <select required name="userType" class="form-control mb-3">
                                                 <option value="">--Select User Roles--</option>
@@ -54,8 +52,7 @@ session_start();
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <!-- <label class="custom-control-label" for="customCheck">Remember
-                          Me</label> -->
+                                                <!-- <label class="custom-control-label" for="customCheck">Remember Me</label> -->
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -65,87 +62,74 @@ session_start();
 
                                     <?php
 
-  if(isset($_POST['login'])){
+                                    if(isset($_POST['login'])){
 
-    $userType = $_POST['userType'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $password = md5($password);
+                                        $userType = $_POST['userType'];
+                                        $username = $_POST['username'];
+                                        $password = $_POST['password'];
 
-    if($userType == "Administrator"){
+                                        // Debugging: Check received inputs
+                                        echo "User Type: $userType<br>";
+                                        echo "Username: $username<br>";
+                                        echo "Password: $password<br>";
 
-      $query = "SELECT * FROM tbladmin WHERE emailAddress = '$username' AND password = '$password'";
-      $rs = $conn->query($query);
-      $num = $rs->num_rows;
-      $rows = $rs->fetch_assoc();
+                                        if($userType == "Administrator"){
 
-      if($num > 0){
+                                            $query = "SELECT * FROM tbladmin WHERE emailAddress = '$username' AND password = '$password'";
+                                            echo "Query: $query<br>";
+                                            $rs = $conn->query($query);
+                                            $num = $rs->num_rows;
+                                            echo "Number of rows: $num<br>";
+                                            $rows = $rs->fetch_assoc();
 
-        $_SESSION['userId'] = $rows['Id'];
-        $_SESSION['firstName'] = $rows['firstName'];
-        $_SESSION['lastName'] = $rows['lastName'];
-        $_SESSION['emailAddress'] = $rows['emailAddress'];
+                                            if($num > 0){
 
-        echo "<script type = \"text/javascript\">
-        window.location = (\"Admin/index.php\")
-        </script>";
-      }
+                                                $_SESSION['userId'] = $rows['Id'];
+                                                $_SESSION['firstName'] = $rows['firstName'];
+                                                $_SESSION['lastName'] = $rows['lastName'];
+                                                $_SESSION['emailAddress'] = $rows['emailAddress'];
 
-      else{
+                                                echo "<script type = \"text/javascript\">
+                                                window.location = (\"Admin/index.php\")
+                                                </script>";
+                                            } else {
+                                                echo "<div class='alert alert-danger' role='alert'>
+                                                Invalid Username/Password!
+                                                </div>";
+                                            }
+                                        } else if($userType == "ClassTeacher"){
 
-        echo "<div class='alert alert-danger' role='alert'>
-        Invalid Username/Password!
-        </div>";
+                                            $query = "SELECT * FROM tblclassteacher WHERE emailAddress = '$username' AND password = '$password'";
+                                            echo "Query: $query<br>";
+                                            $rs = $conn->query($query);
+                                            $num = $rs->num_rows;
+                                            echo "Number of rows: $num<br>";
+                                            $rows = $rs->fetch_assoc();
 
-      }
-    }
-    else if($userType == "ClassTeacher"){
+                                            if($num > 0){
 
-      $query = "SELECT * FROM tblclassteacher WHERE emailAddress = '$username' AND password = '$password'";
-      $rs = $conn->query($query);
-      $num = $rs->num_rows;
-      $rows = $rs->fetch_assoc();
+                                                $_SESSION['userId'] = $rows['Id'];
+                                                $_SESSION['firstName'] = $rows['firstName'];
+                                                $_SESSION['lastName'] = $rows['lastName'];
+                                                $_SESSION['emailAddress'] = $rows['emailAddress'];
+                                                $_SESSION['classId'] = $rows['classId'];
+                                                $_SESSION['classArmId'] = $rows['classArmId'];
 
-      if($num > 0){
-
-        $_SESSION['userId'] = $rows['Id'];
-        $_SESSION['firstName'] = $rows['firstName'];
-        $_SESSION['lastName'] = $rows['lastName'];
-        $_SESSION['emailAddress'] = $rows['emailAddress'];
-        $_SESSION['classId'] = $rows['classId'];
-        $_SESSION['classArmId'] = $rows['classArmId'];
-
-        echo "<script type = \"text/javascript\">
-        window.location = (\"ClassTeacher/index.php\")
-        </script>";
-      }
-
-      else{
-
-        echo "<div class='alert alert-danger' role='alert'>
-        Invalid Username/Password!
-        </div>";
-
-      }
-    }
-    else{
-
-        echo "<div class='alert alert-danger' role='alert'>
-        Invalid Username/Password!
-        </div>";
-
-    }
-}
-?>
-
-                                    <!-- <hr>
-                    <a href="index.html" class="btn btn-google btn-block">
-                      <i class="fab fa-google fa-fw"></i> Login with Google
-                    </a>
-                    <a href="index.html" class="btn btn-facebook btn-block">
-                      <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                    </a> -->
-
+                                                echo "<script type = \"text/javascript\">
+                                                window.location = (\"ClassTeacher/index.php\")
+                                                </script>";
+                                            } else {
+                                                echo "<div class='alert alert-danger' role='alert'>
+                                                Invalid Username/Password!
+                                                </div>";
+                                            }
+                                        } else {
+                                            echo "<div class='alert alert-danger' role='alert'>
+                                            Invalid Username/Password!
+                                            </div>";
+                                        }
+                                    }
+                                    ?>
 
                                     <div class="text-center">
                                     </div>
